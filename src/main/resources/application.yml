@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/ESMS
+    url: jdbc:postgresql://localhost:5432/ESMS2
     username: postgres
     password: 12345
   mvc:

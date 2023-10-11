@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.service.StudentService;
+import com.example.demo.lecturer.Lecturer;
+import com.example.demo.service.LecturerService;
 import com.example.demo.student.Student;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -21,47 +22,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-public class StudentController {
-
+public class LecturerController {
     @Autowired
-    private StudentService studentService;
+    private LecturerService lecturerService;
 
-    @GetMapping("/upStudent")
+    @GetMapping("/upLecturer")
     public String uploadPage() {
-        return "uploadStudent"; // This assumes you have an uploadStudent.html in the templates folder
+        return "uploadLecturer"; // This assumes you have an uploadStudent.html in the templates folder
     }
 
-    @PostMapping("/uploadStudent")
+    @PostMapping("/uploadLecturer")
     public @ResponseBody ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            List<Student> students = parseExcelFile(file);
-            studentService.saveAll(students);
-            return ResponseEntity.status(HttpStatus.OK).body("Students uploaded successfully!");
+            List<Lecturer> lecturers = parseExcelFile(file);
+            lecturerService.saveAll(lecturers);
+            return ResponseEntity.status(HttpStatus.OK).body("Lecturer uploaded successfully!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload students: " + e.getMessage());
         }
     }
 
-    private List<Student> parseExcelFile(MultipartFile file) throws IOException {
-        List<Student> students = new ArrayList<>();
+    private List<Lecturer> parseExcelFile(MultipartFile file) throws IOException {
+        List<Lecturer> lecturers = new ArrayList<>();
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
 
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             if (index > 0) {
                 XSSFRow row = worksheet.getRow(index);
-                Student student = new Student();
+                Lecturer lecturer = new Lecturer();
 
-                student.setStudentId(getCellValueAsString(row.getCell(0)));
-                student.setStudentName(getCellValueAsString(row.getCell(1)));
-                student.setStudentEmail(getCellValueAsString(row.getCell(2)));
+                lecturer.setLecturerId(getCellValueAsString(row.getCell(0)));
+                lecturer.setLecturerName(getCellValueAsString(row.getCell(1)));
+                lecturer.setLecturerEmail(getCellValueAsString(row.getCell(2)));
+                lecturer.setLecturerPhone(getCellValueAsString(row.getCell(3)));
 
-                students.add(student);
+                lecturers.add(lecturer);
             }
         }
 
         workbook.close();
-        return students;
+        return lecturers;
     }
 
     private String getCellValueAsString(XSSFCell cell) {
